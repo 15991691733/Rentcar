@@ -12,7 +12,7 @@
           @click="toggleLang('english')">English</a>
       </div>
       <div class="rc-header-left">
-        <img class="rc-logo" :src="common.LOGO_PATH">
+        <img class="rc-logo" :src="media.LOGO_PATH">
         <img class="rc-slogan" :src="media.SLOGAN_PATH">
       </div>
     </div>
@@ -21,10 +21,14 @@
         <div class="swiper-slide">
           <div class="rc-page rc-page01">
             <div class="rc-galaxy">
+              <!--
+                旋转星空
+                step 1: 使用代理图片以提升首屏加载速度
+               -->
               <div
                 class="rc-bg rc-layer-bg"
                 ref="plbo"
-                :style="{backgroundImage: 'url(' + common.GALAXY_LAYER_BG + ')'}">
+                :style="{backgroundImage: 'url(' + common.GALAXY_LAYER_BG + ')', top: layerEdge, bottom: layerEdge, left: layerEdge, right: layerEdge}">
               </div>
               <div
                 class="rc-bg rc-layer-top"
@@ -47,6 +51,10 @@
                 :style="{visibility: pageIndex === 0 ? 'visible' : 'hidden'}"
                 ref="pbro">{{langs.TRY_LABEL}}</button>
             </div>
+            <!--
+              旋转星空
+              step 1: 同时, 预加载真实图片
+             -->
             <img :src="common.GALAXY_REAL_TOP" v-show="false">
             <img :src="common.GALAXY_REAL_BG" v-show="false">
           </div>
@@ -169,6 +177,15 @@ export default {
       stepIndex: 0
     }
   },
+  beforeCreate () {
+    /**
+     * 旋转星空
+     *  step 3: 计算可视区域对角线, 根据对角线长度撑开容器
+     */
+    let w = document.body.clientWidth
+    let h = document.body.clientHeight
+    this.layerEdge = 'calc(50% - ' + Math.ceil(Math.sqrt(w * w + h * h) / 2) + 'px)'
+  },
   mounted () {
     this.$nextTick(function () {
        let _self = this
@@ -238,6 +255,10 @@ export default {
     },
     initPage01 () {
       setTimeout(() => {
+        /**
+         * 旋转星空
+         *  step 4: 采用真实图片替换代理图片
+         */
         this.$refs.plto.style.backgroundImage = 'url(' + this.common.GALAXY_REAL_TOP + ')'
         this.$refs.plbo.style.backgroundImage = 'url(' + this.common.GALAXY_REAL_BG + ')'
       }, 2000)
@@ -348,13 +369,6 @@ export default {
     -ms-user-select: none;
     -webkit-user-select: none;
   }
-  .one-line {
-    /* 不换行，超出长度的文本以...显示 */
-    word-break: break-all;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-  }
   .btn {
     padding: 5px 16px;
     outline: none;
@@ -451,12 +465,11 @@ export default {
     overflow: hidden;
   }
   .rc-layer-bg {
+    /**
+     * 旋转星空
+     * step 2: 预设 absolute 以使容器可被爆裂拉伸
+     */
     position: absolute;
-    /* 最高兼容 1920px 的屏幕 */
-    width: 1920px;
-    height: 1920px;
-    top: calc(50% - 960px);
-    left: calc(50% - 960px);
     animation: rotate 300s infinite;
     -webkit-animation: rotate 300s infinite;
     z-index: 1;

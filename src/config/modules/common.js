@@ -3,7 +3,6 @@
  */
 
 export default {
-  LOGO_PATH: './static/images/rent_car_logo.png',
   GALAXY_REAL_BG: './static/images/rent_car_12.png',
   GALAXY_LAYER_BG: './static/images/rent_car_14.png',
   GALAXY_REAL_TOP: './static/images/rent_car_10.png',
